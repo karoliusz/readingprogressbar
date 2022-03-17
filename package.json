@@ -1,0 +1,25 @@
+{
+  "name": "readingprogressbar",
+  "version": "0.0.1",
+  "description": "Simple library for visualizing the progress of reading for a blog posts or other vertically aligned content.",
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karoliusz/readingprogressbar.git"
+  },
+  "author": "Karol Bereza",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/karoliusz/readingprogressbar/issues"
+  },
+  "homepage": "https://github.com/karoliusz/readingprogressbar#readme",
+  "devDependencies": {
+    "parcel": "^2.3.2"
+  }
+}
