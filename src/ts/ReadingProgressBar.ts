@@ -2,12 +2,8 @@ import ReadingProgressBarOptions from "./interfaces/ReadingProgressBarOptions.in
 
 import { Viewport } from "./Viewport";
 import { DEFAULT_OPTIONS } from "./constants";
+import { Container } from "./interfaces/Container.interface";
 
-/**
- * - Kontener jest uznawany za aktywny, gdy jego górna krawędź jest nad dolną krawędzią okna, 
- *   a zarazem jego dolna krawędź jest pod dolną krawędzią okna
- * 
- */
 class ReadingProgressBar {
     private viewport = new Viewport();
     // private progressBar = new ProgressBar();
@@ -16,8 +12,10 @@ class ReadingProgressBar {
         private element: HTMLElement,
         private options: Partial<ReadingProgressBarOptions> = {}
     ) {
-        console.log('ReadingProgressBar instantiated!');
+        this.options = { ...DEFAULT_OPTIONS, ...options };
         this.reset();
+
+        console.log('ReadingProgressBar instantiated!', this.options);
     }
 
     public reset() {
@@ -25,9 +23,15 @@ class ReadingProgressBar {
     }
 
     private redetectContentContainers() {
-        const containers = document.getElementsByClassName(DEFAULT_OPTIONS.contentContainerClassName);
-        
-        console.log(Array.from(containers).map(container => container.getBoundingClientRect()));
+        const { contentContainerClassName } = this.options;
+        const containers = document.getElementsByClassName(contentContainerClassName);
+        const containersToTrack: Container[] = Array.from(containers)
+            .map((element, index) => ({
+                id: index,
+                element
+            }));
+
+        this.viewport.addTrackedContainers(containersToTrack);
     }
 }
 

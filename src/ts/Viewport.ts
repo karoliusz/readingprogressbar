@@ -1,6 +1,7 @@
 import { fromEvent, merge, Observable } from 'rxjs';
 import { tap, throttleTime, debounceTime } from 'rxjs/operators';
 import { Container } from './interfaces/Container.interface';
+import { TrackedContainer } from './interfaces/TrackedContainer.interface';
 import ContainerPosition from './interfaces/ContainerPosition.interface';
 
 export class Viewport {
@@ -10,7 +11,7 @@ export class Viewport {
     private resize$: Observable<Event> = null;
 
     private viewportHeight: number = null;
-    private trackedContainers = new Set<Container>();
+    private trackedContainers = new Set<TrackedContainer>();
 
     constructor() {
         this.updateViewportHeight();
@@ -25,17 +26,26 @@ export class Viewport {
 
         this.viewportChange$.subscribe(
             event => {
-                console.log('viewport change', event)
+                console.log(this.getActiveContainer(), event);
             }
         )
     }
 
-    public addTrackedContainers(containers: Container[]) {
+    public addTrackedContainer(container: Container): TrackedContainer[] {
         // TODO: Validate uniqueness of IDs
 
-        containers.forEach(container => {
-            this.trackedContainers.add(container);
-        });
+        const trackedContainer: TrackedContainer = {
+            ...container,
+            position: this.getContainerPosition(container.element)
+        };
+
+        this.trackedContainers.add(trackedContainer);
+
+        return Array.from(this.trackedContainers);
+    }
+
+    public addTrackedContainers(containers: Container[]) {
+        containers.forEach(container => this.addTrackedContainer(container));
 
         return Array.from(this.trackedContainers);
     }
@@ -55,13 +65,27 @@ export class Viewport {
         this.trackedContainers.clear();
     }
 
-    public isInViewport(element: HTMLElement): boolean {
-        return false;
+    /**
+     * A container is considered "active", when its upper edge is not below viewport,
+     * and its bottom edge is below the viewport
+     */
+    public getActiveContainer(): TrackedContainer {
+        const trackedContainers = Array.from(this.trackedContainers);
+        const viewportTopPos = this.getScrollY();
+        const viewportBottomPos = viewportTopPos + this.viewportHeight;
+
+        return trackedContainers.find(container => {
+            const containerTopEdgeBelowViewport = container.position.top > viewportBottomPos;
+            const containerBottomEdgeBelowViewport = container.position.bottom > viewportBottomPos;
+            const isActive = !containerTopEdgeBelowViewport && containerBottomEdgeBelowViewport;
+
+            return isActive;
+        });
     }
 
-    private getContainerPosition(element: HTMLElement): ContainerPosition {
+    private getContainerPosition(element: Element): ContainerPosition {
         const rect = element.getBoundingClientRect();
-        const scrollY = window.scrollY;
+        const scrollY = this.getScrollY();
 
         return {
             top: rect.top + scrollY,
@@ -73,5 +97,9 @@ export class Viewport {
         const documentElement = document.documentElement;
 
         this.viewportHeight = documentElement.clientHeight;
+    }
+
+    private getScrollY(): number {
+        return window.scrollY;
     }
 }
