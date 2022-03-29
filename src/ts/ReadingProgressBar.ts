@@ -1,21 +1,29 @@
 import ReadingProgressBarOptions from "./interfaces/ReadingProgressBarOptions.interface";
 
-import { Viewport } from "./Viewport";
 import { DEFAULT_OPTIONS } from "./constants";
+import { Viewport } from "./Viewport";
 import { Container } from "./interfaces/Container.interface";
+import { ProgressBar } from "./ProgressBar";
 
 class ReadingProgressBar {
-    private viewport = new Viewport();
-    // private progressBar = new ProgressBar();
+    private viewport: Viewport;
+    private progressBar: ProgressBar;
+    private options: ReadingProgressBarOptions;
 
     constructor(
-        private element: HTMLElement,
-        private options: Partial<ReadingProgressBarOptions> = {}
+        element: Element,
+        options: Partial<ReadingProgressBarOptions> = {}
     ) {
         this.options = { ...DEFAULT_OPTIONS, ...options };
+        this.progressBar = new ProgressBar(element, this.options);
+        this.viewport = new Viewport();
         this.reset();
 
-        console.log('ReadingProgressBar instantiated!', this.options);
+        this.progressBar.setStatePercentage(35);
+
+        this.viewport.viewportChange$.subscribe(({ scrollPercentage }) => {
+            this.progressBar.setStatePercentage(scrollPercentage);
+        });
     }
 
     public reset() {

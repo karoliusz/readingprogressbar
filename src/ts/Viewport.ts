@@ -1,11 +1,11 @@
 import { fromEvent, merge, Observable } from 'rxjs';
-import { tap, throttleTime, debounceTime } from 'rxjs/operators';
+import { tap, throttleTime, debounceTime, map } from 'rxjs/operators';
 import { Container } from './interfaces/Container.interface';
 import { TrackedContainer } from './interfaces/TrackedContainer.interface';
 import ContainerPosition from './interfaces/ContainerPosition.interface';
 
 export class Viewport {
-    public viewportChange$: Observable<Event> = null;
+    public viewportChange$: Observable<{ activeContainerId: number | string | Symbol; scrollPercentage: number; }> = null;
     
     private scroll$: Observable<Event> = null;
     private resize$: Observable<Event> = null;
@@ -22,13 +22,21 @@ export class Viewport {
                 tap(() => this.updateViewportHeight())
             );
 
-        this.viewportChange$ = merge(this.scroll$, this.resize$).pipe(throttleTime(100));
+        this.viewportChange$ = merge(this.scroll$, this.resize$)
+            .pipe(
+                throttleTime(50, null, {
+                    trailing: true,
+                    leading: false
+                }),
+                map(() => {
+                    const activeContainer = this.getActiveContainer();
 
-        this.viewportChange$.subscribe(
-            event => {
-                console.log(this.getActiveContainer(), event);
-            }
-        )
+                    return {
+                        activeContainerId: activeContainer ? activeContainer.id : null,
+                        scrollPercentage: activeContainer ? this.calculateScrollPercentage(activeContainer) : 0
+                    };
+                })
+            );
     }
 
     public addTrackedContainer(container: Container): TrackedContainer[] {
@@ -71,16 +79,33 @@ export class Viewport {
      */
     public getActiveContainer(): TrackedContainer {
         const trackedContainers = Array.from(this.trackedContainers);
+
+        return trackedContainers.find(container => this.isActive(container));
+    }
+
+    private calculateScrollPercentage(container: TrackedContainer): number {
         const viewportTopPos = this.getScrollY();
         const viewportBottomPos = viewportTopPos + this.viewportHeight;
+        const isActive = this.isActive(container);
 
-        return trackedContainers.find(container => {
-            const containerTopEdgeBelowViewport = container.position.top > viewportBottomPos;
-            const containerBottomEdgeBelowViewport = container.position.bottom > viewportBottomPos;
-            const isActive = !containerTopEdgeBelowViewport && containerBottomEdgeBelowViewport;
+        if (isActive) {
+            const containerHeight = container.position.bottom - container.position.top;
+            const remainingDistance = container.position.bottom - viewportBottomPos;
+            const scrolledDistance = containerHeight - remainingDistance;                
+            
+            return Math.round((scrolledDistance / containerHeight) * 1000) / 10;
+        }
 
-            return isActive;
-        });
+        return null;
+    }
+
+    private isActive({ position }: TrackedContainer) {
+        const viewportTopPos = this.getScrollY();
+        const viewportBottomPos = viewportTopPos + this.viewportHeight;
+        const containerTopEdgeBelowViewport = position.top > viewportBottomPos;
+        const containerBottomEdgeBelowViewport = position.bottom > viewportBottomPos;
+
+        return !containerTopEdgeBelowViewport && containerBottomEdgeBelowViewport;
     }
 
     private getContainerPosition(element: Element): ContainerPosition {
