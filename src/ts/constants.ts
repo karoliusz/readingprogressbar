@@ -2,7 +2,8 @@ import ReadingProgressBarOptions from "./interfaces/ReadingProgressBarOptions.in
 
 export const DEFAULT_OPTIONS: ReadingProgressBarOptions = {
     contentContainerClassName: 'blogPost',
-    cssClass: 'readingProgressBar'
+    cssClass: 'readingProgressBar',
+    throttleTimeMs: 0
 } as const;
 
 export const CLASS_NAMES = {

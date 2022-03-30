@@ -16,10 +16,11 @@ class ReadingProgressBar {
     ) {
         this.options = { ...DEFAULT_OPTIONS, ...options };
         this.progressBar = new ProgressBar(element, this.options);
-        this.viewport = new Viewport();
+        this.viewport = new Viewport(
+            this.options.throttleTimeMs,
+            this.getTrackedContainers(this.options.contentContainerClassName)
+        );
         this.reset();
-
-        this.progressBar.setStatePercentage(35);
 
         this.viewport.viewportChange$.subscribe(({ scrollPercentage }) => {
             this.progressBar.setStatePercentage(scrollPercentage);
@@ -32,14 +33,21 @@ class ReadingProgressBar {
 
     private redetectContentContainers() {
         const { contentContainerClassName } = this.options;
+
+        this.viewport.addTrackedContainers(
+            this.getTrackedContainers(contentContainerClassName)
+        );
+    }
+
+    private getTrackedContainers(contentContainerClassName: string) {
         const containers = document.getElementsByClassName(contentContainerClassName);
         const containersToTrack: Container[] = Array.from(containers)
             .map((element, index) => ({
                 id: index,
                 element
             }));
-
-        this.viewport.addTrackedContainers(containersToTrack);
+        
+        return containersToTrack;
     }
 }
 
