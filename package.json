@@ -6,9 +6,25 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
+  "browserslist": "defaults",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "demo": "parcel demo/demo.html"
+    "demo": "parcel serve --target demo",
+    "build": "parcel build --target css --target js"
+  },
+  "targets": {
+    "css": {
+      "source": "src/scss/main.scss",
+      "distDir": "dist/css"
+    },
+    "js": {
+      "source": "src/index.ts",
+      "distDir": "dist/js"
+    },
+    "demo": {
+      "source": "demo/demo.html",
+      "distDir": "dist/demo"
+    }
   },
   "repository": {
     "type": "git",
