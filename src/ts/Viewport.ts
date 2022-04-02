@@ -122,8 +122,14 @@ export class Viewport {
         const viewportTopPos = this.getScrollY();
         const viewportBottomPos = viewportTopPos + this.viewportHeight;
         const isActive = this.isActive(container);
+        const isInInitialView = container.position.top < this.viewportHeight;
 
-        if (isActive) {
+        if (isActive && isInInitialView) {
+            const totalScrollDistance = container.position.bottom - this.viewportHeight;
+            const scrolledDistance = totalScrollDistance - (container.position.bottom - viewportBottomPos);
+
+            return Math.round((scrolledDistance / totalScrollDistance) * 1000) / 10;
+        } else if (isActive) {
             const containerHeight = container.position.bottom - container.position.top;
             const remainingDistance = container.position.bottom - viewportBottomPos;
             const scrolledDistance = containerHeight - remainingDistance;
