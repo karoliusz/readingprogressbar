@@ -51,4 +51,4 @@ class ReadingProgressBar {
     }
 }
 
-export default ReadingProgressBar;
+export { ReadingProgressBar };
