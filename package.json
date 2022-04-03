@@ -7,8 +7,7 @@
   "module": "dist/readingprogressbar.mjs",
   "browserslist": "defaults",
   "scripts": {
-    "build": "rollup -c",
-    "prepare": "npm run build"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -20,6 +19,9 @@
     "url": "https://github.com/karoliusz/readingprogressbar/issues"
   },
   "homepage": "https://github.com/karoliusz/readingprogressbar#readme",
+  "dependencies": {
+    "rxjs": "^7.5.5"
+  },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.1",
     "@tsconfig/recommended": "^1.0.1",
@@ -28,7 +30,6 @@
     "rollup-plugin-dts": "^4.2.0",
     "rollup-plugin-esbuild": "^4.8.2",
     "rollup-plugin-scss": "^3.0.0",
-    "rxjs": "^7.5.5",
     "sass": "^1.49.11",
     "typescript": "^4.6.3"
   }
