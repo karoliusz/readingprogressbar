@@ -7,7 +7,8 @@
   "module": "dist/readingprogressbar.mjs",
   "browserslist": "defaults",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
