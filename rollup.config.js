@@ -1,10 +1,10 @@
-import dts from 'rollup-plugin-dts'
-import esbuild from 'rollup-plugin-esbuild'
-import scss from 'rollup-plugin-scss'
-import { terser } from 'rollup-plugin-terser'
+import dts from 'rollup-plugin-dts';
+import esbuild from 'rollup-plugin-esbuild';
+import scss from 'rollup-plugin-scss';
 import { defineConfig } from 'rollup';
+import nodeResolve from '@rollup/plugin-node-resolve';
 
-const name = require('./package.json').main.replace(/\.js$/, '')
+const name = 'dist/readingprogressbar';
 
 const configs = [
   defineConfig({
@@ -17,11 +17,6 @@ const configs = [
     output: [
       {
         file: `${name}.js`,
-        format: 'cjs',
-        sourcemap: true
-      },
-      {
-        file: `${name}.mjs`,
         format: 'es',
         sourcemap: true,
       }
@@ -31,6 +26,7 @@ const configs = [
     input: 'src/index.ts',
     external: ['./scss/main.scss'],
     plugins: [
+      nodeResolve(),
       esbuild({
         minify: true,
         target: 'es2017'
@@ -54,7 +50,6 @@ const configs = [
       format: 'es',
     },
   })
-]
-
+];
 
 export default configs;

@@ -14,4 +14,4 @@ declare class ReadingProgressBar {
     private getTrackedContainers;
 }
 
-export { ReadingProgressBar };
+export { ReadingProgressBar as default };

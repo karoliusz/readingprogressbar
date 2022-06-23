@@ -2,9 +2,8 @@
   "name": "readingprogressbar",
   "version": "0.0.1",
   "description": "Simple library for visualizing the progress of reading for a blog posts or other vertically aligned content.",
-  "main": "dist/readingprogressbar.js",
+  "main": "dist/readingprogressbar.mjs",
   "types": "dist/readingprogressbar.d.ts",
-  "module": "dist/readingprogressbar.mjs",
   "browserslist": "defaults",
   "scripts": {
     "build": "rollup -c"
@@ -23,6 +22,7 @@
     "rxjs": "^7.5.5"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.1",
     "@tsconfig/recommended": "^1.0.1",
     "@types/rollup": "^0.54.0",

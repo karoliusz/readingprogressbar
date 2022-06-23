@@ -1,3 +1,4 @@
 import './scss/main.scss';
+import { ReadingProgressBar } from "./ts/ReadingProgressBar";
 
-export { ReadingProgressBar } from "./ts/ReadingProgressBar";
+export default ReadingProgressBar;

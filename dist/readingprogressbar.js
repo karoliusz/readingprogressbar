@@ -1,9 +1,5 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var rxjs = require('rxjs');
-var operators = require('rxjs/operators');
+import { BehaviorSubject, fromEvent, merge, combineLatest } from 'rxjs';
+import { debounceTime, tap, throttleTime, map, filter, distinctUntilKeyChanged } from 'rxjs/operators';
 
 const DEFAULT_OPTIONS = {
   contentContainerClassName: "blogPost",
@@ -30,18 +26,18 @@ class Viewport {
       this.addTrackedContainers(trackedContainers);
       activeContainer = this.getActiveContainer();
     }
-    this.viewportChange$ = new rxjs.BehaviorSubject({
+    this.viewportChange$ = new BehaviorSubject({
       activeContainerId: activeContainer ? activeContainer.id : null,
       scrollPercentage: activeContainer ? this.calculateScrollPercentage(activeContainer) : 0
     });
-    this.scroll$ = rxjs.fromEvent(window, "scroll");
-    this.resize$ = rxjs.fromEvent(window, "resize").pipe(operators.debounceTime(300), operators.tap(() => this.updateViewportHeight()));
-    this.activeContainer$ = rxjs.merge(this.scroll$, this.resize$).pipe(operators.throttleTime(throttleTimeMs, null, {
+    this.scroll$ = fromEvent(window, "scroll");
+    this.resize$ = fromEvent(window, "resize").pipe(debounceTime(300), tap(() => this.updateViewportHeight()));
+    this.activeContainer$ = merge(this.scroll$, this.resize$).pipe(throttleTime(throttleTimeMs, null, {
       trailing: true,
       leading: false
-    }), operators.map(() => this.getActiveContainer()));
-    this.lastActiveContainer$ = this.activeContainer$.pipe(operators.filter((container) => !!container), operators.distinctUntilKeyChanged("id"));
-    rxjs.combineLatest([this.activeContainer$, this.lastActiveContainer$]).pipe(operators.map((data) => this.getViewportState(...data))).subscribe((data) => this.viewportChange$.next(data));
+    }), map(() => this.getActiveContainer()));
+    this.lastActiveContainer$ = this.activeContainer$.pipe(filter((container) => !!container), distinctUntilKeyChanged("id"));
+    combineLatest([this.activeContainer$, this.lastActiveContainer$]).pipe(map((data) => this.getViewportState(...data))).subscribe((data) => this.viewportChange$.next(data));
   }
   addTrackedContainer(container) {
     const trackedContainer = {
@@ -199,5 +195,5 @@ class ReadingProgressBar {
   }
 }
 
-exports.ReadingProgressBar = ReadingProgressBar;
+export { ReadingProgressBar as default };
 //# sourceMappingURL=readingprogressbar.js.map

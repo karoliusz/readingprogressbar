@@ -6,11 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="profile" href="https://gmpg.org/xfn/11">
 
-        <link rel="stylesheet" href="../src/scss/main.scss" />
-        <link rel="stylesheet" href="scss/main.scss" />
-
-        <script src="../src/index.ts" type="module"></script>
-        <script src="ts/main.ts" type="module"></script>
+        <link rel="stylesheet" href="../dist/readingprogressbar.css" />
+        <link rel="stylesheet" href="css/main.css" />
     </head>
     <body class="blogBody">
         <header class="blogHeader">
@@ -136,5 +133,15 @@
                 </p>
             </article>
         </main>
+        <script src="../dist/readingprogressbar.min.js"></script>
+        <script>
+            const progressBarElement = document.getElementById('readingProgressBar');
+            const progressBarOptions = {
+                throttleTimeMs: 100
+            };
+            const progressBar = new ReadingProgressBar(progressBarElement, progressBarOptions);
+
+            console.log(progressBar);
+        </script>
     </body>
 </html>
