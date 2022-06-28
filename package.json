@@ -2,7 +2,7 @@
   "name": "readingprogressbar",
   "version": "0.0.1",
   "description": "Simple library for visualizing the progress of reading for a blog posts or other vertically aligned content.",
-  "main": "dist/readingprogressbar.mjs",
+  "main": "dist/readingprogressbar.js",
   "types": "dist/readingprogressbar.d.ts",
   "browserslist": "defaults",
   "scripts": {
